@@ -16,10 +16,73 @@ class TaskFlowApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
         useMaterial3: true,
       ),
-      home: const WelcomeScreen(),
+
+      // DESARROLLO C: Nueva pantalla inicial
+      home: const TaskListScreen(),
     );
   }
 }
+
+// DESARROLLO A: MODELO DE TAREA
+
+class Task {
+  const Task({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.priority,
+    required this.isCompleted,
+  });
+
+  final int id;
+  final String title;
+  final String description;
+  final String priority;
+  final bool isCompleted;
+}
+
+// CINCO TAREAS DE PRUEBA
+
+
+const demoTasks = [
+  Task(
+    id: 1,
+    title: 'Crear pantalla de bienvenida',
+    description: 'Diseñar saludo personalizado de TaskFlow',
+    priority: 'Alta',
+    isCompleted: true,
+  ),
+  Task(
+    id: 2,
+    title: 'Implementar contador de tareas',
+    description: 'Agregar y completar tareas usando setState',
+    priority: 'Alta',
+    isCompleted: true,
+  ),
+  Task(
+    id: 3,
+    title: 'Diseñar tarjetas de tareas',
+    description: 'Crear componente reutilizable TaskCard',
+    priority: 'Media',
+    isCompleted: true,
+  ),
+  Task(
+    id: 4,
+    title: 'Implementar listado de tareas',
+    description: 'Mostrar backlog con ListView.builder',
+    priority: 'Alta',
+    isCompleted: true,
+  ),
+  Task(
+    id: 5,
+    title: 'Preparar evidencias y GitHub',
+    description: 'Capturar pantalla y subir cambios al repositorio',
+    priority: 'Media',
+    isCompleted: false,
+  ),
+];
+
+// PANTALLA DE BIENVENIDA ANTERIOR
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -33,13 +96,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   int pendingTasks = 3;
 
-  // Meta diaria de tareas
   static const dailyGoal = 5;
 
-  // Contador de tareas completadas
   int completedTasks = 0;
 
-  // Completar una tarea
   void _completeTask() {
     if (pendingTasks == 0) {
       return;
@@ -54,7 +114,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     });
   }
 
-  // Agregar una tarea
   void _addTask() {
     setState(() {
       pendingTasks++;
@@ -78,11 +137,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               '¡Hola, $studentName!',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
+
             const SizedBox(height: 12),
 
             Text(statusMessage),
 
-            // Mostrar tareas completadas hoy
             Text('Completadas hoy: $completedTasks de $dailyGoal'),
 
             const SizedBox(height: 28),
@@ -120,6 +179,51 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// DESARROLLO B: COMPONENTE REUTILIZABLE TASKCARD
+
+class TaskCard extends StatelessWidget {
+  const TaskCard({super.key, required this.task});
+
+  final Task task;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        leading: Icon(
+          task.isCompleted ? Icons.check_circle : Icons.radio_button_unchecked,
+          color: task.isCompleted ? Colors.green : null,
+        ),
+        title: Text(task.title),
+        subtitle: Text('${task.priority} · ${task.description}'),
+        trailing: const Icon(Icons.chevron_right),
+      ),
+    );
+  }
+}
+
+// DESARROLLO C: LISTA DE TAREAS BAJO DEMANDA
+
+class TaskListScreen extends StatelessWidget {
+  const TaskListScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Mis tareas')),
+      body: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: demoTasks.length,
+        itemBuilder: (context, index) {
+          final task = demoTasks[index];
+
+          return TaskCard(task: task);
+        },
       ),
     );
   }
